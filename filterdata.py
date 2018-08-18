@@ -94,3 +94,21 @@ def pearson(rating1, rating2):
 		return (sum_xy - (sum_x * sum_y) / n) / denominator
 
 # print pearson(users['Sam'], users['Veronica'])
+
+
+def cosineSimilarity(rating1, rating2):
+	'''余弦相似度'''
+	x, y, xy = 0, 0, 0
+	
+	for key in rating1:
+		if key in rating2:
+			x += pow(rating1[key], 2)
+			y += pow(rating2[key], 2)
+			xy += rating1[key] * rating2[key]
+	return xy / (sqrt(x) * sqrt(y))
+
+# Clara = {'Blues Traveler': 4.75, 'Norah Jones': 4.5, 'Phoenix': 5, 'The Strokes': 4.25, 'Weird Al': 4}
+# Robert = {'Blues Traveler': 4, 'Norah Jones': 3, 'Phoenix': 5, 'The Strokes': 2, 'Weird Al': 1}
+
+# print cosineSimilarity(users['Veronica'], users['Angelica'])
+# print cosineSimilarity(Clara, Robert)
