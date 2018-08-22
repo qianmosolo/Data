@@ -1,5 +1,6 @@
 # coding: utf-8
 
+import os
 import numpy as np
 from numpy import *
 import operator
@@ -242,9 +243,58 @@ def datingClassTest():
 	print('准确率: %.2f%%' % (100 - errorCount / numTestVecs * 100))
 
 
-if __name__ == '__main__':
-	datingClassTest()
+# if __name__ == '__main__':
+# 	datingClassTest()
 
+
+################################################
+#  识别数字
+################################################
+def img2vector(filename):
+	datas = np.zeros((1, 1024))
+	fn = open(filename)
+	for i in range(32):
+		line = fn.readline()
+		for j in range(32):
+			datas[0, 32*i+j] = int(line[j])
+	return datas
+
+
+def handwritingClassTest():
+	labels = []
+	trainingFileList = os.listdir('./action/Ch02/digits/trainingDigits')
+	random.shuffle(trainingFileList) 
+	m = len(trainingFileList) # 文件数
+	print('m: %d' % m)
+	trainingMat = np.zeros((m, 1024))
+	for i in range(m):
+		fileNameStr = trainingFileList[i] # 0_25.txt
+		fileStr = fileNameStr.split('.')[0]	# 0_25
+		classNumStr = int(fileStr.split('_')[0]) # 0
+		labels.append(classNumStr)
+		trainingMat[i, :] = img2vector('./action/Ch02/digits/trainingDigits/%s' % fileNameStr)
+
+	testFileList = os.listdir('./action/Ch02/digits/testDigits')
+	random.shuffle(testFileList)
+	errorCount = 0.0
+	mTest = len(testFileList)
+	print('mTest: %d' % mTest)
+	for i in range(mTest):
+		fileNameStr = testFileList[i]
+		fileStr = fileNameStr.split('.')[0]
+		classNumStr = int(fileStr.split('_')[0])
+		vectorUnderTest = img2vector('./action/Ch02/digits/testDigits/%s' % fileNameStr)
+		classifierResult = classify(vectorUnderTest, trainingMat, labels, 50)
+		print('训练结果: %d\t原始数字: %d' % (classifierResult, classNumStr))
+		if classifierResult != classNumStr:
+			errorCount += 1.0
+	print('错误个数: %d' % errorCount)
+	print('错误率: %.2f%%' % (errorCount / mTest * 100))
+
+
+if __name__ == '__main__':
+	handwritingClassTest()
+	# print(img2vector('./action/Ch02/digits/trainingDigits/0_25.txt')[0, :32])
 
 #######################################################################
  # 思路:
@@ -262,3 +312,26 @@ if __name__ == '__main__':
  #  (2) 用测试数据验证训练数据
  #  (3) 利用欧式距离,找出最近的k个值,取出其中数目最多的类别
  #  (4) 测算准确率
+
+######################################################################
+ # k如何取值准确率最高?
+ # k值并不是越高越好
+ # k = 1   error rate: 1.27
+ # k = 2   error rate: 1.37
+ # k = 3   error rate: 1.16   ***
+ # k = 4   error rate: 1.48
+ # k = 5   error rate: 1.8
+ # k = 6   error rate: 2.01
+ # k = 7   error rate: 2.43
+ # k = 8   error rate: 2.22
+ # k = 9   error rate: 2.22
+ # k = 10  error rate: 2.11
+ # k = 20  error rate: 2.85
+
+######################################################################
+# k值的取值过程:
+# (1) 根据np.argsort进行排名: 排名连续的；出现相同的数, 位置在前的排名在前
+# (2) 取出排名最靠前的k个值(类别)
+# (3) 统计k个值中不同类别的个数
+# (4) 返回数目最多的类别
+# ps: 距离最近的并不一定为返回结果
