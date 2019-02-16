@@ -34,6 +34,76 @@ class Tree:
             self.print_tree(node.left)
             print(node.val)
             self.print_tree(node.right)
+ 
+    def pre_walk_tree(self, node):
+        if node:
+            print(node.val)
+            self.pre_walk_tree(node.left)
+            self.pre_walk_tree(node.right)
+
+    def back_walk_tree(self, node):
+        if node:
+            self.back_walk_tree(node.left)
+            self.back_walk_tree(node.right)
+            print(node.val)
+   
+    def pre_walk_tree_stack(self, node):
+        print('-- pre --')
+        if node is None:
+            return
+        stack = []
+        cur = node
+        while cur or stack:
+            while cur:
+                print(cur.val),
+                stack.append(cur)
+                cur = cur.left
+            cur = stack.pop()
+            cur = cur.right
+
+    def in_walk_tree_stack(self, node):
+        print('-- in --')
+        if node is None:
+            return
+        stack = []
+        cur = node
+        while cur or stack:
+            while cur:
+                stack.append(cur)
+                cur = cur.left
+            cur = stack.pop()
+            print(cur.val)
+            cur = cur.right
+
+    def back_walk_tree_stack(self, node):
+        print('-- back --')
+        if node is None:
+            return
+        stack1 = []
+        stack2 = []
+        stack1.append(node)
+        while stack1:
+            cur = stack1.pop()
+            if cur.left:
+                stack1.append(cur.left)
+            if cur.right:
+                stack1.append(cur.right)
+            stack2.append(cur)
+        while stack2:
+            print(stack2.pop().val)
+
+    def level_queue(self, node):
+        if node is None:
+            return
+        queue = []
+        queue.append(node)
+        while queue:
+            node = queue.pop(0)
+            print(node.val)
+            if node.left is not None:
+                queue.append(node.left)
+            if node.right is not None:
+                queue.append(node.right)
 
     def display(self):
         self.print_tree(self.root)
@@ -110,6 +180,13 @@ def main():
     T.display()
     T.delete(27)
     T.display()
+    T.level_queue(T.root)
+    print('-' * 20)
+    T.pre_walk_tree_stack(T.root)
+    print('-' * 20)
+    T.in_walk_tree_stack(T.root)
+    print('-' * 20)
+    T.back_walk_tree_stack(T.root)
 
 if __name__ == '__main__':
     main()
