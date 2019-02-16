@@ -187,6 +187,8 @@ def main():
     T.in_walk_tree_stack(T.root)
     print('-' * 20)
     T.back_walk_tree_stack(T.root)
+    print('-' * 20)
+    T.level_queue(T.root)
 
 if __name__ == '__main__':
     main()
